@@ -1,0 +1,58 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+ <div class="content">
+	            <div class="container-fluid">
+	                <div class="row">
+	                    <div class="col-md-12">
+	                        <div class="card">
+	                            <div class="card-content">
+	                                <div class="toolbar">
+										<a class="btn btn-sm btn-danger" href="{% url 'tambah_kriteria' %}">+Kriteria</a> &ensp; &ensp;
+	                                    <!--Here you can write extra buttons/actions for the toolbar-->
+	                                </div>
+	                                <table id="bootstrap-table" class="table">
+	                                    <thead>
+	                                        <th data-field="state" data-checkbox="true"></th>
+	                                        <th data-field="id" class="text-center">No</th>
+	                                    	<th data-field="name" data-sortable="true">Kode Kriteria</th>
+	                                    	<th data-field="salary" data-sortable="true">Nama Kriteria</th>
+	                                    	<th data-field="country" data-sortable="true">Bobot</th>
+	                                    	<th data-field="city">Jenis</th>
+	                                    	<th>Action</th>
+	                                    </thead>
+	                                    <tbody>
+											
+
+											{% for k in kriteria %}
+											<tr>
+												<td></td>
+												<td>{{forloop.counter}}</td>
+												<td>{{k.kode_kriteria}}</td>
+												<td>{{k.nama_kriteria}}</td>
+												<td>{{k.bobot}}</td>
+												<td>{{k.jenis}}</td>
+												<td>
+													<a class="btn btn-sm btn-warning" href="{% url 'edit_kriteria' k.id %}">edit</a>
+													<a onclick="return confirm('delete kriteria?');" class="btn btn-sm btn-danger" href="{% url 'delete_kriteria' k.id %}">delete</a>
+												</td>
+												
+												
+												
+										</tr>
+										</tr>
+										{% endfor %}
+										
+	                                    </tbody>
+	                                </table>
+	                            </div>
+	                        </div><!--  end card  -->
+	                    </div> <!-- end col-md-12 -->
+	                </div> <!-- end row -->
+	            </div>
+	        </div>
+{% endblock content%}
+
+{% block js %}
+
+{% endblock js %}

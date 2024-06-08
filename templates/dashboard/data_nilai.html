@@ -1,0 +1,58 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+ <div class="content">
+	            <div class="container-fluid">
+	                <div class="row">
+	                    <div class="col-md-12">
+	                        <div class="card">
+	                            <div class="card-content">
+	                                <div class="toolbar">
+										<a class="btn btn-sm btn-danger" href="{% url 'tambah_nilai' %}">+Kriteria</a> &ensp; &ensp;
+	                                    <!--Here you can write extra buttons/actions for the toolbar-->
+	                                </div>
+	                                <table id="bootstrap-table" class="table">
+	                                    <thead>
+	                                        <th class="text-center">No</th>
+	                                    	<th data-sortable="true">Nama</th>
+	                                    	<th data-sortable="true">Absensi</th>
+	                                    	<th data-sortable="true">Skill</th>
+                                            <th data-sortable="true">Tanggung Jawab</th>
+	                                    	<th data-sortable="true">Loyalitas</th>
+                                            <th data-sortable="true">Pelanggaran</th>
+	                                    	<th>Action</th>
+	                                    </thead>
+	                                    <tbody>
+											
+
+											{% for dk in datakriteria %}
+											<tr>
+										
+												<td>{{forloop.counter}}</td>
+												<td>{{dk.nama}}</td>
+												<td>{{dk.absensi}}</td>
+												<td>{{dk.skill}}</td>
+												<td>{{dk.tanggung_jawab}}</td>
+												<td>{{dk.loyalitas}}</td>
+												<td>{{dk.pelanggaran}}</td>
+												<td>	
+													<a class="btn btn-sm btn-warning" href="{% url 'edit_data' dk.id %}">edit</a>
+													<a onclick="return confirm('delete kriteria?');" class="btn btn-sm btn-danger "href="{% url 'delete_data' dk.id %}">delete</a>
+												</td>
+												
+											</tr>
+										{% endfor %}
+										
+	                                    </tbody>
+	                                </table>
+	                            </div>
+	                        </div><!--  end card  -->
+	                    </div> <!-- end col-md-12 -->
+	                </div> <!-- end row -->
+	            </div>
+	        </div>
+{% endblock content%}
+
+{% block js %}
+
+{% endblock js %}

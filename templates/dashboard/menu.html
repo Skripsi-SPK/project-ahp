@@ -1,0 +1,145 @@
+{% load static %}
+<div class="sidebar-wrapper">
+    <div class="user">
+        <div class="photo">
+            <img src="{% static 'dash/img/faces/face-2.jpg' %}" />
+        </div>
+        <div class="info">
+            <a data-toggle="collapse" href="#collapseExample" class="collapsed">
+                <span>
+                    {{user}}
+                    <b class="caret"></b>
+                </span>
+            </a>
+            <div class="clearfix"></div>
+
+            <div class="collapse" id="collapseExample">
+                <ul class="nav">
+                    <li>
+                        <a href="#profile">
+                            <span class="sidebar-mini">Mp</span>
+                            <span class="sidebar-normal">My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <ul class="nav">
+        <li>
+            <a data-toggle="collapse" href="#dashboardOverview">
+                <i class="ti-panel"></i>
+                <p>Data Alternatif
+                    <b class="caret"></b>
+                </p>
+            </a>
+            <div class="collapse" id="dashboardOverview">
+                <ul class="nav">
+                    <li>
+                        <a href="{% url 'data_alternatif' %}">
+                            <span class="sidebar-mini">O</span>
+                            <span class="sidebar-normal">Data Alternatif</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+            <li>
+                        <a href="{% url 'data_kriteria' %}">
+                        <i class="ti-clipboard"></i>
+                        <p>Bobot Kriteria</p>
+                    </a>
+            <li>
+            <li>
+                        <a href="{% url 'data_subkriteria' %}">
+                        <i class="ti-clipboard"></i>
+                         <p>Nilai Kriteria</p>
+                    </a>
+            <li>
+                        <a href="{% url 'data_nilai' %}">
+                        <i class="ti-clipboard"></i>
+                        <p>Data Kriteria</p>
+                    </a>
+            <li>
+
+            <a data-toggle="collapse" href="#formsExamples">
+                <i class="ti-clipboard"></i>
+                <p>
+                    Seleksi Metode AHP
+                   <b class="caret"></b>
+                </p>
+            </a>
+            <div class="collapse" id="formsExamples">
+                <ul class="nav">
+                    <li>
+                        <a href="{% url 'perbandingan kriteria' %}">
+                            <span class="sidebar-mini">PK</span>
+                            <span class="sidebar-normal">Perbandingan Kriteria</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'perbandingan alternatif' %}">
+                            <span class="sidebar-mini">PA</span>
+                            <span class="sidebar-normal">Perbandingan Alternatif</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'hasil perhitungan' %}">
+                            <span class="sidebar-mini">HP</span>
+                            <span class="sidebar-normal">Hasil Perhitungan</span>
+                        </a>
+                    </li>
+                    <li>
+                        
+                </ul>
+            </div>
+        
+        </li>
+        <li>
+           
+        </li>
+        <li>
+            
+            <a href="{% url 'logout' %}">
+                <p>Logout</p>
+            </a>
+        </li>
+        <li>
+            <div class="collapse" id="pagesExamples">
+                <ul class="nav">
+                    <li>
+                        <a href="../pages/timeline.html">
+                            <span class="sidebar-mini">TP</span>
+                            <span class="sidebar-normal">Timeline Page</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../pages/user.html">
+                            <span class="sidebar-mini">UP</span>
+                            <span class="sidebar-normal">User Page</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../pages/login.html">
+                            <span class="sidebar-mini">LP</span>
+                            <span class="sidebar-normal">Login Page</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../pages/register.html">
+                            <span class="sidebar-mini">RP</span>
+                            <span class="sidebar-normal">Register Page</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../pages/lock.html">
+                            <span class="sidebar-mini">LSP</span>
+                            <span class="sidebar-normal">Lock Screen Page</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
