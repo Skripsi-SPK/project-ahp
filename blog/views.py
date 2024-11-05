@@ -2,8 +2,8 @@ from re import template
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import Alternatif, Divisi, Kriteria, SubKriteria, DataKriteria
-from .forms import AlternatifForms, KriteriaForms, SubkriteriaForms, DataKriteriaForms
+from .models import Alternatif, Divisi, Kriteria, SubKriteria, DataKriteria, Criteria, Comparison, SubCriteria, Perbandingan
+from .forms import AlternatifForms, KriteriaForms, SubkriteriaForms, DataKriteriaForms, ComparisonForm, PerbandinganForm
 
 from numpy.linalg import eig
 import numpy as np
@@ -264,72 +264,623 @@ def delete_data(request, id):
 
 
 @login_required
-def perbandingan(request):
-    template_name = "dashboard/perbandingan kriteria.html"
+def perbandingan_kriteria(request):
+    template_name = "dashboard/perbandingan_kriteria.html"
+     # Predefined criteria
+    criteria_names = ['Absensi', 'Skill', 'Tanggung Jawab', 'Loyalitas', 'Pelanggaran']
+    
+    # Create or get criteria from database
+    for name in criteria_names:
+        Criteria.objects.get_or_create(name=name)
+
+    if request.method == 'POST':
+        comparison_form = ComparisonForm(request.POST)
+        if comparison_form.is_valid():
+            comparison_form.save()
+            return redirect(perbandingan_kriteria)  # Redirect after saving
+    else:
+        comparison_form = ComparisonForm()
+
+    criteria = Criteria.objects.all()
+    comparisons = Comparison.objects.all()
+
+    # Calculate weights if there are enough comparisons
+    weights = {}
+    consistency_ratio = None
+    consistency_index = None
+    lambda_max = None
+
+    if comparisons.count() > 0:
+        n = len(criteria)
+        matrix = np.ones((n, n))
+
+        for comp in comparisons:
+            i = list(criteria).index(comp.criteria1)
+            j = list(criteria).index(comp.criteria2)
+            matrix[i][j] = comp.value
+            matrix[j][i] = 1 / comp.value
+
+        # Calculate weights using AHP
+        weights_raw = matrix.sum(axis=0)
+        weights_normalized = weights_raw / weights_raw.sum()
+        
+        for i, criteria in enumerate(criteria):
+            weights[criteria.name] = round(weights_normalized[i], 4)
+        
+        #Calculate lambda_max (principal eigenvalue)
+        weighted_matrix = np.dot(matrix, weights_normalized)  # Multiply matrix by priority vector
+        lambda_max = np.mean(weighted_matrix / weights_normalized)  # Calculate λmax
+
+        # Calculate Consistency Index (CI) and Consistency Ratio (CR)
+        #principal_eigenvalue = np.mean(np.dot(matrix, weights_normalized) / weights_normalized)
+        # consistency_index = (lambda_max - n) / (n - 1)
+
+        # Random Index (RI) values based on matrix size
+        random_index_values = {
+            1: 0.00,
+            2: 0.00,
+            3: 0.58,
+            4: 0.90,
+            5: 1.12,
+            6: 1.24,
+            7: 1.32,
+            8: 1.41,
+            9: 1.45,
+            10: 1.49
+        }
+        
+        #random_index = random_index_values.get(n, 5)
+        
+        #if random_index is not None:
+            #consistency_ratio = consistency_index / random_index 
     context ={
-        'title':'perbandingan kriteria',
+        'form': comparison_form,
+        'criteria': criteria,
+        'comparisons':comparisons,
+        'weights': weights,
+        #'lambda_max': lambda_max,
+        #'random_index_values':random_index_values,
+        # Pass λmax to the template
+        #'consistency_index': consistency_index,
+        #'consistency_ratio': consistency_ratio,
         
     }
     return render(request ,template_name, context)
 
 @login_required
-def rumus(request):
-    template_name = "dashboard/perbandingan alternatif.html"
+def delete_perbandingan(request, id):
+    Comparison.objects.get(id=id).delete()
+    return redirect(perbandingan_kriteria)
+
+@login_required
+def perbandingan_subkriteria_absensi(request):
+    template_name = "dashboard/perbandingan_subkriteria_absensi.html"
+     # Predefined subcriteria
+    subcriteria_names = ['Sangat Baik', 'Baik', 'Cukup Baik', 'Kurang Baik', 'Buruk']
+    
+    # Create or get criteria from database
+    for name in subcriteria_names:
+        SubCriteria.objects.get_or_create(name=name)
+
+    if request.method == 'POST':
+        perbandingan_form = PerbandinganForm(request.POST)
+        if perbandingan_form.is_valid():
+            perbandingan_form.save()
+            return redirect(perbandingan_subkriteria_absensi)  # Redirect after saving
+    else:
+        perbandingan_form = PerbandinganForm()
+
+    subcriteria = SubCriteria.objects.all()
+    perbandingan = Perbandingan.objects.all()
+
+    # Calculate weights if there are enough comparisons
+    weights = {}
+    consistency_ratio = None
+    consistency_index = None
+    lambda_max = None
+
+    if perbandingan.count() > 0:
+        n = len(subcriteria)
+        matrix = np.ones((n, n))
+
+        for comp in perbandingan:
+            i = list(subcriteria).index(comp.subcriteria1)
+            j = list(subcriteria).index(comp.subcriteria2)
+            matrix[i][j] = comp.value
+            matrix[j][i] = 1 / comp.value
+
+        # Calculate weights using AHP
+        weights_raw = matrix.sum(axis=0)
+        weights_normalized = weights_raw / weights_raw.sum()
+        
+        for i, subcriteria in enumerate(subcriteria):
+            weights[subcriteria.name] = round(weights_normalized[i], 4)
+        
+        #Calculate lambda_max (principal eigenvalue)
+        weighted_matrix = np.dot(matrix, weights_normalized)  # Multiply matrix by priority vector
+        lambda_max = np.mean(weighted_matrix / weights_normalized)  # Calculate λmax
+
+        # Calculate Consistency Index (CI) and Consistency Ratio (CR)
+        #principal_eigenvalue = np.mean(np.dot(matrix, weights_normalized) / weights_normalized)
+        # consistency_index = (lambda_max - n) / (n - 1)
+
+        # Random Index (RI) values based on matrix size
+        random_index_values = {
+            1: 0.00,
+            2: 0.00,
+            3: 0.58,
+            4: 0.90,
+            5: 1.12,
+            6: 1.24,
+            7: 1.32,
+            8: 1.41,
+            9: 1.45,
+            10: 1.49
+        }
+        
+        #random_index = random_index_values.get(n, 5)
+        
+        #if random_index is not None:
+            #consistency_ratio = consistency_index / random_index 
     context ={
-        'title':'perbandingan alternatif',
+        'form': perbandingan_form,
+        'subcriteria': subcriteria,
+        'perbandingan':perbandingan,
+        'weights': weights,
+        #'lambda_max': lambda_max,
+        #'random_index_values':random_index_values,
+        # Pass λmax to the template
+        #'consistency_index': consistency_index,
+        #'consistency_ratio': consistency_ratio,
         
     }
     return render(request ,template_name, context)
 
+@login_required
+def delete_perbandingan_absensi(request, id):
+    Perbandingan.objects.get(id=id).delete()
+    return redirect(perbandingan_subkriteria_absensi)
+
+def perbandingan_subkriteria_skill(request):
+    template_name = "dashboard/perbandingan_subkriteria_skill.html"
+     # Predefined subcriteria
+    subcriteria_names = ['Sangat Baik', 'Baik', 'Cukup Baik', 'Kurang Baik', 'Buruk']
+    
+    # Create or get criteria from database
+    for name in subcriteria_names:
+        SubCriteria.objects.get_or_create(name=name)
+
+    if request.method == 'POST':
+        perbandingan_form = PerbandinganForm(request.POST)
+        if perbandingan_form.is_valid():
+            perbandingan_form.save()
+            return redirect(perbandingan_subkriteria_skill)  # Redirect after saving
+    else:
+        perbandingan_form = PerbandinganForm()
+
+    subcriteria = SubCriteria.objects.all()
+    perbandingan = Perbandingan.objects.all()
+
+    # Calculate weights if there are enough comparisons
+    weights = {}
+    consistency_ratio = None
+    consistency_index = None
+    lambda_max = None
+
+    if perbandingan.count() > 0:
+        n = len(subcriteria)
+        matrix = np.ones((n, n))
+
+        for comp in perbandingan:
+            i = list(subcriteria).index(comp.subcriteria1)
+            j = list(subcriteria).index(comp.subcriteria2)
+            matrix[i][j] = comp.value
+            matrix[j][i] = 1 / comp.value
+
+        # Calculate weights using AHP
+        weights_raw = matrix.sum(axis=0)
+        weights_normalized = weights_raw / weights_raw.sum()
+        
+        for i, subcriteria in enumerate(subcriteria):
+            weights[subcriteria.name] = round(weights_normalized[i], 4)
+        
+        #Calculate lambda_max (principal eigenvalue)
+        weighted_matrix = np.dot(matrix, weights_normalized)  # Multiply matrix by priority vector
+        lambda_max = np.mean(weighted_matrix / weights_normalized)  # Calculate λmax
+
+        # Calculate Consistency Index (CI) and Consistency Ratio (CR)
+        #principal_eigenvalue = np.mean(np.dot(matrix, weights_normalized) / weights_normalized)
+        # consistency_index = (lambda_max - n) / (n - 1)
+
+        # Random Index (RI) values based on matrix size
+        random_index_values = {
+            1: 0.00,
+            2: 0.00,
+            3: 0.58,
+            4: 0.90,
+            5: 1.12,
+            6: 1.24,
+            7: 1.32,
+            8: 1.41,
+            9: 1.45,
+            10: 1.49
+        }
+        
+        #random_index = random_index_values.get(n, 5)
+        
+        #if random_index is not None:
+            #consistency_ratio = consistency_index / random_index 
+    context ={
+        'form': perbandingan_form,
+        'subcriteria': subcriteria,
+        'perbandingan':perbandingan,
+        'weights': weights,
+        #'lambda_max': lambda_max,
+        #'random_index_values':random_index_values,
+        # Pass λmax to the template
+        #'consistency_index': consistency_index,
+        #'consistency_ratio': consistency_ratio,
+        
+    }
+    return render(request ,template_name, context)
+
+@login_required
+def delete_perbandingan_skill(request, id):
+    Perbandingan.objects.get(id=id).delete()
+    return redirect(perbandingan_subkriteria_skill)
+
+def perbandingan_subkriteria_tanggungjawab(request):
+    template_name = "dashboard/perbandingan_subkriteria_tanggungjawab.html"
+     # Predefined subcriteria
+    subcriteria_names = ['Sangat Baik', 'Baik', 'Cukup Baik', 'Kurang Baik', 'Buruk']
+    
+    # Create or get criteria from database
+    for name in subcriteria_names:
+        SubCriteria.objects.get_or_create(name=name)
+
+    if request.method == 'POST':
+        perbandingan_form = PerbandinganForm(request.POST)
+        if perbandingan_form.is_valid():
+            perbandingan_form.save()
+            return redirect(perbandingan_subkriteria_tanggungjawab)  # Redirect after saving
+    else:
+        perbandingan_form = PerbandinganForm()
+
+    subcriteria = SubCriteria.objects.all()
+    perbandingan = Perbandingan.objects.all()
+
+    # Calculate weights if there are enough comparisons
+    weights = {}
+    consistency_ratio = None
+    consistency_index = None
+    lambda_max = None
+
+    if perbandingan.count() > 0:
+        n = len(subcriteria)
+        matrix = np.ones((n, n))
+
+        for comp in perbandingan:
+            i = list(subcriteria).index(comp.subcriteria1)
+            j = list(subcriteria).index(comp.subcriteria2)
+            matrix[i][j] = comp.value
+            matrix[j][i] = 1 / comp.value
+
+        # Calculate weights using AHP
+        weights_raw = matrix.sum(axis=0)
+        weights_normalized = weights_raw / weights_raw.sum()
+        
+        for i, subcriteria in enumerate(subcriteria):
+            weights[subcriteria.name] = round(weights_normalized[i], 4)
+        
+        #Calculate lambda_max (principal eigenvalue)
+        weighted_matrix = np.dot(matrix, weights_normalized)  # Multiply matrix by priority vector
+        lambda_max = np.mean(weighted_matrix / weights_normalized)  # Calculate λmax
+
+        # Calculate Consistency Index (CI) and Consistency Ratio (CR)
+        #principal_eigenvalue = np.mean(np.dot(matrix, weights_normalized) / weights_normalized)
+        # consistency_index = (lambda_max - n) / (n - 1)
+
+        # Random Index (RI) values based on matrix size
+        random_index_values = {
+            1: 0.00,
+            2: 0.00,
+            3: 0.58,
+            4: 0.90,
+            5: 1.12,
+            6: 1.24,
+            7: 1.32,
+            8: 1.41,
+            9: 1.45,
+            10: 1.49
+        }
+        
+        #random_index = random_index_values.get(n, 5)
+        
+        #if random_index is not None:
+            #consistency_ratio = consistency_index / random_index 
+    context ={
+        'form': perbandingan_form,
+        'subcriteria': subcriteria,
+        'perbandingan':perbandingan,
+        'weights': weights,
+        #'lambda_max': lambda_max,
+        #'random_index_values':random_index_values,
+        # Pass λmax to the template
+        #'consistency_index': consistency_index,
+        #'consistency_ratio': consistency_ratio,
+        
+    }
+    return render(request ,template_name, context)
+
+@login_required
+def delete_perbandingan_tanggungjawab(request, id):
+    Perbandingan.objects.get(id=id).delete()
+    return redirect(perbandingan_subkriteria_tanggungjawab)
+
+@login_required
+def perbandingan_subkriteria_loyalitas(request):
+    template_name = "dashboard/perbandingan_subkriteria_loyalitas.html"
+     # Predefined subcriteria
+    subcriteria_names = ['Sangat Baik', 'Baik', 'Cukup Baik', 'Kurang Baik', 'Buruk']
+    
+    # Create or get criteria from database
+    for name in subcriteria_names:
+        SubCriteria.objects.get_or_create(name=name)
+
+    if request.method == 'POST':
+        perbandingan_form = PerbandinganForm(request.POST)
+        if perbandingan_form.is_valid():
+            perbandingan_form.save()
+            return redirect(perbandingan_subkriteria_loyalitas)  # Redirect after saving
+    else:
+        perbandingan_form = PerbandinganForm()
+
+    subcriteria = SubCriteria.objects.all()
+    perbandingan = Perbandingan.objects.all()
+
+    # Calculate weights if there are enough comparisons
+    weights = {}
+    consistency_ratio = None
+    consistency_index = None
+    lambda_max = None
+
+    if perbandingan.count() > 0:
+        n = len(subcriteria)
+        matrix = np.ones((n, n))
+
+        for comp in perbandingan:
+            i = list(subcriteria).index(comp.subcriteria1)
+            j = list(subcriteria).index(comp.subcriteria2)
+            matrix[i][j] = comp.value
+            matrix[j][i] = 1 / comp.value
+
+        # Calculate weights using AHP
+        weights_raw = matrix.sum(axis=0)
+        weights_normalized = weights_raw / weights_raw.sum()
+        
+        for i, subcriteria in enumerate(subcriteria):
+            weights[subcriteria.name] = round(weights_normalized[i], 4)
+        
+        #Calculate lambda_max (principal eigenvalue)
+        weighted_matrix = np.dot(matrix, weights_normalized)  # Multiply matrix by priority vector
+        lambda_max = np.mean(weighted_matrix / weights_normalized)  # Calculate λmax
+
+        # Calculate Consistency Index (CI) and Consistency Ratio (CR)
+        #principal_eigenvalue = np.mean(np.dot(matrix, weights_normalized) / weights_normalized)
+        # consistency_index = (lambda_max - n) / (n - 1)
+
+        # Random Index (RI) values based on matrix size
+        random_index_values = {
+            1: 0.00,
+            2: 0.00,
+            3: 0.58,
+            4: 0.90,
+            5: 1.12,
+            6: 1.24,
+            7: 1.32,
+            8: 1.41,
+            9: 1.45,
+            10: 1.49
+        }
+        
+        #random_index = random_index_values.get(n, 5)
+        
+        #if random_index is not None:
+            #consistency_ratio = consistency_index / random_index 
+    context ={
+        'form': perbandingan_form,
+        'subcriteria': subcriteria,
+        'perbandingan':perbandingan,
+        'weights': weights,
+        #'lambda_max': lambda_max,
+        #'random_index_values':random_index_values,
+        # Pass λmax to the template
+        #'consistency_index': consistency_index,
+        #'consistency_ratio': consistency_ratio,
+        
+    }
+    return render(request ,template_name, context)
+
+@login_required
+def delete_perbandingan_loyalitas(request, id):
+    Perbandingan.objects.get(id=id).delete()
+    return redirect(perbandingan_subkriteria_loyalitas)
+
+def perbandingan_subkriteria_pelanggaran(request):
+    template_name = "dashboard/perbandingan_subkriteria_pelanggaran.html"
+     # Predefined subcriteria
+    subcriteria_names = ['Sangat Baik', 'Baik', 'Cukup Baik', 'Kurang Baik', 'Buruk']
+    
+    # Create or get criteria from database
+    for name in subcriteria_names:
+        SubCriteria.objects.get_or_create(name=name)
+
+    if request.method == 'POST':
+        perbandingan_form = PerbandinganForm(request.POST)
+        if perbandingan_form.is_valid():
+            perbandingan_form.save()
+            return redirect(perbandingan_subkriteria_pelanggaran)  # Redirect after saving
+    else:
+        perbandingan_form = PerbandinganForm()
+
+    subcriteria = SubCriteria.objects.all()
+    perbandingan = Perbandingan.objects.all()
+
+    # Calculate weights if there are enough comparisons
+    weights = {}
+    consistency_ratio = None
+    consistency_index = None
+    lambda_max = None
+
+    if perbandingan.count() > 0:
+        n = len(subcriteria)
+        matrix = np.ones((n, n))
+
+        for comp in perbandingan:
+            i = list(subcriteria).index(comp.subcriteria1)
+            j = list(subcriteria).index(comp.subcriteria2)
+            matrix[i][j] = comp.value
+            matrix[j][i] = 1 / comp.value
+
+        # Calculate weights using AHP
+        weights_raw = matrix.sum(axis=0)
+        weights_normalized = weights_raw / weights_raw.sum()
+        
+        for i, subcriteria in enumerate(subcriteria):
+            weights[subcriteria.name] = round(weights_normalized[i], 4)
+        
+        #Calculate lambda_max (principal eigenvalue)
+        weighted_matrix = np.dot(matrix, weights_normalized)  # Multiply matrix by priority vector
+        lambda_max = np.mean(weighted_matrix / weights_normalized)  # Calculate λmax
+
+        # Calculate Consistency Index (CI) and Consistency Ratio (CR)
+        #principal_eigenvalue = np.mean(np.dot(matrix, weights_normalized) / weights_normalized)
+        # consistency_index = (lambda_max - n) / (n - 1)
+
+        # Random Index (RI) values based on matrix size
+        random_index_values = {
+            1: 0.00,
+            2: 0.00,
+            3: 0.58,
+            4: 0.90,
+            5: 1.12,
+            6: 1.24,
+            7: 1.32,
+            8: 1.41,
+            9: 1.45,
+            10: 1.49
+        }
+        
+        #random_index = random_index_values.get(n, 5)
+        
+        #if random_index is not None:
+            #consistency_ratio = consistency_index / random_index 
+    context ={
+        'form': perbandingan_form,
+        'subcriteria': subcriteria,
+        'perbandingan':perbandingan,
+        'weights': weights,
+        #'lambda_max': lambda_max,
+        #'random_index_values':random_index_values,
+        # Pass λmax to the template
+        #'consistency_index': consistency_index,
+        #'consistency_ratio': consistency_ratio,
+        
+    }
+    return render(request ,template_name, context)
+
+@login_required
+def delete_perbandingan_pelanggaran(request, id):
+    Perbandingan.objects.get(id=id).delete()
+    return redirect(perbandingan_subkriteria_pelanggaran)
+    
 @login_required
 def hasil(request):
     template_name = "dashboard/hasil perhitungan.html"
-    criteria_data = DataKriteria.objects.all().first()  # Ambil hanya satu data saja sesuai kebutuhan Anda
-
-    # Ubah data dari model ke dalam bentuk dictionary
-    data = {
-        'absensi': criteria_data.absensi,
-        'skill': criteria_data.skill,
-        'tanggung_jawab': criteria_data.tanggung_jawab,
-        'loyalitas': criteria_data.loyalitas,
-        'pelanggaran': criteria_data.pelanggaran
-    }
-
-    # Hitung bobot relatif menggunakan fungsi calculate_AHP_weights
-    weights = calculate_AHP_weights(data)
-
-    print("Bobot relatif kriteria:", weights)
     context ={
-        'title':'hasil perhitungan',
-        
+        'title': 'hasil perhitungan'
     }
-    return render(request ,template_name, context)
+    return render(request, template_name, context)
 
 
-def calculate_AHP_weights(data):
-    # Buat matriks perbandingan pasangan
-    pairwise_matrix = np.array([
-        [1, data['absensi'],data['skill'], data['loyalitas'], data['tanggung_jawab']],
-        [1/data['absensi'], 1, data['absensi']/data['skill'], data['absensi']/data['loyalitas'], data['absensi']/data['tanggung_jawab']],
-        [1/data['skill'], data['skill']/data['absensi'], 1, data['skill']/data['loyalitas'], data['skill']/data['tanggung_jawab']],
-        [1/data['loyalitas'], data['loyalitas']/data['absensi'], data['loyalitas']/data['skill'], 1, data['loyalitas']/data['tanggung_jawab']],
-        [1/data['tanggung_jawab'], data['tanggung_jawab']/data['absensi'], data['tanggung_jawab']/data['skill'], data['tanggung_jawab']/data['loyalitas'], 1],
+
+#def perbandingan_kriteria(request):
+    template_name = "dashboard/perbandingan_kriteria.html"
+    ratio_index_saaty = np.array([0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.46, 1.49])
+
+    # data_kriteria = ["saputra", 12, 1212, 1222]
+    # print(data_kriteria[0])
+    berpasangan = matriks_perbandingan_berpasangan()
+    print(berpasangan.shape)
+
+    p_total = np.sum(berpasangan, axis=0)
+    p_priority = berpasangan / p_total
+    p_priority_weight = np.mean(p_priority, axis=1)
+    p_consistency = np.dot(berpasangan, p_priority_weight) / p_priority_weight
+    print(p_consistency)
+    n = berpasangan.shape[0]
+    lambda_max = np.mean(p_consistency)
+
+    RI = ratio_index_saaty[n]
+    CI = (lambda_max - n) / (n - 1)
+    CR = CI / RI
+    print(CR)
+
+
+    # print(berpasangan)
+    context = {
+        "title":"perbandingan kriteria",
+    }
+    return render(request, template_name, context)
+
+
+#def matriks_perbandingan_berpasangan():
+    p_criteria = np.array([
+        [1,     1,   5,   3,   5],
+        [1,     1,   5,   3,   5],
+        [1/5, 1/5,   1,   1/3, 1],
+        [1/3, 1/3,   3,   1,   3],
+        [1/5, 1/5,   1, 1/3,   1]
     ])
-
-    # Hitung eigenvalue dan eigenvector
-    eigenvalues, eigenvectors = eig(pairwise_matrix)
-
-    # Ambil eigenvector yang sesuai dengan eigenvalue maksimum
-    max_eigenvalue_index = np.argmax(eigenvalues)
-    weights = np.real(eigenvectors[:, max_eigenvalue_index])
-
-    # Normalisasi bobot
-    normalized_weights = weights / np.sum(weights)
-
-    return normalized_weights[:5].tolist()  # Mengembalikan hanya 5 bobot relatif pertama
+    return p_criteria
 
 
 
+
+
+###########################################################################
+# ratio_index_saaty = np.array([0, 0, 0.58, 0.9, 1.12, 1.24, 1.32, 1.41, 1.46, 1.49])
+# perbandinqan antar kriteria
+# p_criteria = np.array([
+#     [1,     1,   5,   3,   5],
+#     [1,     1,   5,   3,   5],
+#     [1/5, 1/5,   1,   1/3, 1],
+#     [1/3, 1/3,   3,   1,   3],
+#     [1/5, 1/5,   1, 1/3,   1]
+# ])
+# print(p_criteria.shape)
+# # vektor total untuk semua baris (axis=0)
+# p_total = np.sum(p_criteria, axis=0)
+# print(p_total)
+# # matriks normalisasi
+# p_priority = p_criteria / p_total
+# print(p_priority)
+# # vektor bobot prioritas
+# p_priority_weight = np.mean(p_priority, axis=1)
+# print(p_priority_weight)
+
+# p_consistency = np.dot(p_criteria, p_priority_weight) / p_priority_weight
+# print(p_consistency)
+
+# n = p_criteria.shape[0]
+# lambda_max = np.mean(p_consistency)
+
+# RI = ratio_index_saaty[n]
+# CI = (lambda_max - n) / (n - 1)
+# CR = CI / RI
+
+# # Konsisten apabila 0 < CR < 0.1 
+# print(CR)
 
 
         

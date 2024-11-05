@@ -1,79 +1,50 @@
 {% extends 'dashboard/base.html' %}
 
 {% block content %}
-<div class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-content">
-                        <div class="toolbar">
-                            <!--Here you can write extra buttons/actions for the toolbar-->
-                        </div>
-                        <table id="bootstrap-table" class="table">
-                            <thead>
-                                <th data-field="state" data-checkbox="true"></th>
-                                <th data-field="id" class="text-center">ID</th>
-                                <th data-field="name" data-sortable="true">Name</th>
-                                <th data-field="salary" data-sortable="true">Salary</th>
-                                <th data-field="country" data-sortable="true">Country</th>
-                                <th data-field="city">City</th>
-                                <th data-field="actions" class="td-actions text-right" data-events="operateEvents" data-formatter="operateFormatter">Actions</th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td></td>
-                                    <td>1</td>
-                                    <td>Dakota Rice</td>
-                                    <td>$36,738</td>
-                                    <td>Niger</td>
-                                    <td>Oud-Turnhout</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>2</td>
-                                    <td>Minerva Hooper</td>
-                                    <td>$23,789</td>
-                                    <td>Curaçao</td>
-                                    <td>Sinaai-Waas</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>3</td>
-                                    <td>Sage Rodriguez</td>
-                                    <td>$56,142</td>
-                                    <td>Netherlands</td>
-                                    <td>Baileux</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>4</td>
-                                    <td>Philip Chaney</td>
-                                    <td>$38,735</td>
-                                    <td>Korea, South</td>
-                                    <td>Overland Park</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>5</td>
-                                    <td>Doris Greene</td>
-                                    <td>$63,542</td>
-                                    <td>Malawi</td>
-                                    <td>Feldkirchen in Kärnten</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div><!--  end card  -->
-            </div> <!-- end col-md-12 -->
-        </div> <!-- end row -->
-    </div>
-</div>
+<!-- ranking_result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Perankingan AHP</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Hasil Perankingan Alternatif</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Alternatif</th>
+                <th>Absensi</th>
+                <th>Skill</th>
+                <th>Tanggung Jawab</th>
+                <th>Loyalitas</th>
+                <th>Pelanggaran</th>
+                <th>Nilai Akhir</th>
+                <th>Peringkat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alternatif in hasil_ranking %}
+            <tr>
+                <td>{{ alternatif.name }}</td>
+                <td>{{ alternatif.absensi }}</td>
+                <td>{{ alternatif.skill }}</td>
+                <td>{{ alternatif.tanggung_jawab }}</td>
+                <td>{{ alternatif.loyalitas }}</td>
+                <td>{{ alternatif.pelanggaran }}</td>
+                <td>{{ alternatif.nilai_akhir|floatformat:2 }}</td>
+                <td>{{ forloop.counter }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+
 {% endblock content %}

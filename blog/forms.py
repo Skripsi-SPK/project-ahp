@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import fields
 from django.forms import widgets
-from .models import  Alternatif, Kriteria, SubKriteria, DataKriteria
+from .models import  Alternatif, Kriteria, SubKriteria, DataKriteria, Comparison, Criteria, Perbandingan
 
 class AlternatifForms(forms.ModelForm):
     class Meta:
@@ -145,3 +145,26 @@ class DataKriteriaForms(forms.ModelForm):
                 }),
         }
 
+class ComparisonForm(forms.ModelForm):
+    class Meta:
+        model = Comparison
+        fields = ['criteria1', 'criteria2', 'value']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        c1 = cleaned_data.get('criteria1')
+        c2 = cleaned_data.get('criteria2')
+        if c1 == c2:
+            raise forms.ValidationError("Criteria must be different.")
+        
+class PerbandinganForm(forms.ModelForm):
+    class Meta:
+        model = Perbandingan
+        fields = ['subcriteria1', 'subcriteria2', 'value']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        c1 = cleaned_data.get('subcriteria1')
+        c2 = cleaned_data.get('subcriteria2')
+        if c1 == c2:
+            raise forms.ValidationError("SubCriteria must be different.")

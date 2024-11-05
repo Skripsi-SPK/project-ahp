@@ -1,0 +1,79 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perbandingan Subkriteria Tanggung Jawab</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Perbandingan Subkriteria Tanggung Jawab</h1>
+
+    <h2>Add Pairwise Comparison</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Comparison</button>
+    </form>
+
+    <h2>Current Comparisons</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>SubCriteria 1</th>
+                <th>SubCriteria 2</th>
+                <th>Comparison Value</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for perbandingan in perbandingan %}
+                <tr>
+                    <td>{{ perbandingan.subcriteria1 }}</td>
+                    <td>{{ perbandingan.subcriteria2 }}</td>
+                    <td>{{ perbandingan.value }}</td>
+                    <td> 
+                        <a onclick="return confirm('delete perbandingan tanggungjawab?');" class="btn btn-sm btn-danger" href="{% url 'delete_perbandingan_tanggungjawab' perbandingan.id %}">delete</a>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if weights %}
+      <h2>Calculated Weights</h2>
+      <ul>
+          {% for name, weight in weights.items %}
+              <li>{{ name }}: {{ weight }}</li>
+          {% endfor %}
+      </ul>
+      {% if consistency_index is not None and consistency_ratio is not None %}
+          <h3>Consistency Measures</h3>
+          <p>Consistency Index (CI): {{ consistency_index|floatformat:4 }}</p>
+          <p>Consistency Ratio (CR): {{ consistency_ratio|floatformat:4 }}</p>
+
+          {% if consistency_ratio > 0.1 %}
+              <p class="warning">Warning: CR exceeds acceptable threshold (0.10). Please review your comparisons.</p>
+          {% endif %}
+          <p>Principal Eigenvalue (λ<sub>max</sub>): {{ lambda_max|floatformat:4 }}</p> <!-- Display λmax -->
+      {% endif %}
+       
+    {% endif %}
+    
+</body>
+</html>
+{% endblock content %}

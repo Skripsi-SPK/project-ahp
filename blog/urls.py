@@ -20,10 +20,19 @@ urlpatterns = [
     path('tambah-nilai/',tambah_nilai, name='tambah_nilai'),
     path('data/edit/<str:id>',edit_data, name='edit_data'),
     path('data/delete/<str:id>',delete_data, name='delete_data'),
-    path('perbandingan/',perbandingan, name='perbandingan kriteria'),
-    path('rumus/',rumus, name='perbandingan alternatif'),
+    path('perbandingan/',perbandingan_kriteria, name='perbandingan_kriteria'),
+    path('perbandingan/delete/<str:id>',delete_perbandingan, name='delete_perbandingan'),
+    path('perbandingan-subkriteria-absensi/',perbandingan_subkriteria_absensi, name='perbandingan_subkriteria_absensi'),
+    path('perbandingan-absensi/delete/<str:id>',delete_perbandingan_absensi, name='delete_perbandingan_absensi'),
+    path('perbandingan-subkriteria-skill/',perbandingan_subkriteria_skill, name='perbandingan_subkriteria_skill'),
+    path('perbandingan-skill/delete/<str:id>',delete_perbandingan_skill, name='delete_perbandingan_skill'),
+    path('perbandingan-subkriteria-tanggungjawab/',perbandingan_subkriteria_tanggungjawab, name='perbandingan_subkriteria_tanggungjawab'),
+    path('perbandingan-subkriteria-tanggungjawab/delete/<str:id>',delete_perbandingan_tanggungjawab, name='delete_perbandingan_tanggungjawab'),
+    path('perbandingan-subkriteria-loyalitas/',perbandingan_subkriteria_loyalitas, name='perbandingan_subkriteria_loyalitas'),
+    path('perbandingan-subkriteria-loyalitas/delete/<str:id>',delete_perbandingan_loyalitas, name='delete_perbandingan_loyalitas'),
+    path('perbandingan-subkriteria-pelanggaran/',perbandingan_subkriteria_pelanggaran, name='perbandingan_subkriteria_pelanggaran'),
+    path('perbandingan-subkriteria-pelanggaran/delete/<str:id>',delete_perbandingan_pelanggaran, name='delete_perbandingan_pelanggaran'),
     path('hasil/',hasil, name='hasil perhitungan'),
+    
    
-]  
-
-
+] 

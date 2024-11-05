@@ -1,0 +1,7 @@
+[
+    {"model": "blog.criteria", "pk": 1, "fields": {"name": "Absensi"}},
+    {"model": "blog.criteria", "pk": 2, "fields": {"name": "Skill"}},
+    {"model": "blog.criteria", "pk": 3, "fields": {"name": "Tanggung Jawab"}},
+    {"model": "blog.criteria", "pk": 4, "fields": {"name": "Loyalitas"}},
+    {"model": "blog.criteria", "pk": 5, "fields": {"name": "Pelanggaran"}}
+]

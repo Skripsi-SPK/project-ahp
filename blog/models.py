@@ -62,3 +62,32 @@ class DataKriteria(models.Model):
     
     class Meta:
         verbose_name_plural = "DataKriteria"
+
+class Criteria(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Comparison(models.Model):
+    criteria1 = models.ForeignKey(Criteria, related_name='comparisons_as_first', on_delete=models.CASCADE)
+    criteria2 = models.ForeignKey(Criteria, related_name='comparisons_as_second', on_delete=models.CASCADE)
+    value = models.FloatField()
+
+    def __str__(self):
+        return f"{self.criteria1} vs {self.criteria2} : {self.value}"
+
+class SubCriteria(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+    
+class Perbandingan(models.Model):
+    subcriteria1 = models.ForeignKey(SubCriteria, related_name='comparisons_as_first', on_delete=models.CASCADE)
+    subcriteria2 = models.ForeignKey(SubCriteria, related_name='comparisons_as_second', on_delete=models.CASCADE)
+    value = models.FloatField()
+
+    def __str__(self):
+        return f"{self.subcriteria1} vs {self.subcriteria2} : {self.value}"
+        
