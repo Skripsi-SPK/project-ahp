@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import fields
 from django.forms import widgets
-from .models import  Alternatif, Kriteria, SubKriteria, DataKriteria, Comparison, Criteria, Perbandingan
+from .models import  Alternatif, Kriteria, SubKriteria, DataKriteria, Comparison,  Perbandingan, Perhitungan, SubCriterion
 
 class AlternatifForms(forms.ModelForm):
     class Meta:
@@ -168,3 +168,18 @@ class PerbandinganForm(forms.ModelForm):
         c2 = cleaned_data.get('subcriteria2')
         if c1 == c2:
             raise forms.ValidationError("SubCriteria must be different.")
+        
+
+class PerhitunganForm(forms.ModelForm):
+    class Meta:
+        model = Perhitungan
+        fields = ['alternatif', 'kriteria', 'sub_kriteria']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['sub_kriteria'].queryset = SubCriterion.objects.none()
+
+        if 'kriteria' in self.data:
+            kriteria_id = int(self.data.get('kriteria'))
+            self.fields['sub_kriteria'].queryset = SubCriterion.objects.filter(kriteria_id=kriteria_id)
+

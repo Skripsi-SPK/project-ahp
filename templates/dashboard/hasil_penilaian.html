@@ -1,0 +1,91 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">{{ title }}</h2>
+
+    <!-- Form Penilaian -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Form Penilaian Alternatif</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Alternatif</th>
+                                {% for k in kriteria %}
+                                <th>{{ k.nama }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for alt in alternatif %}
+                            <tr>
+                                <td>{{ alt.nama }}</td>
+                                {% for k in kriteria %}
+                                <td>
+                                    <select name="penilaian_{{ alt.id }}_{{ k.id }}" class="form-select" required>
+                                        <option value="">Pilih Sub Kriteria</option>
+                                        {% for sub in k.subcriterion_set.all %}
+                                        <option value="{{ sub.id }}" 
+                                            {% if penilaian_dict|get_item:alt.id|get_item:k.id.sub_kriteria.id == sub.id %}
+                                            selected
+                                            {% endif %}>
+                                            {{ sub.nama }} ({{ sub.bobot }})
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="btn btn-primary">Hitung</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabel Hasil -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Hasil Perhitungan AHP</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ranking</th>
+                            <th>Alternatif</th>
+                            <th>Nilai Akhir</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hasil in hasil_ahp %}
+                        <tr>
+                            <td>{{ total.ranking }}</td>
+                            <td>{{ total.alternatif.nama }}</td>
+                            <td>{{ total.nilai_akhir|floatformat:4 }}</td>
+                            <td>
+                                <a href="{% url 'detail_penilaian' hasil.id %}" 
+                                   class="btn btn-sm btn-info">Detail</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

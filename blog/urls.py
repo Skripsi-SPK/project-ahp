@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import *
+from .views_new import *
 
 urlpatterns = [ 
     path('', dashboard, name='dashboard'),
@@ -32,7 +32,12 @@ urlpatterns = [
     path('perbandingan-subkriteria-loyalitas/delete/<str:id>',delete_perbandingan_loyalitas, name='delete_perbandingan_loyalitas'),
     path('perbandingan-subkriteria-pelanggaran/',perbandingan_subkriteria_pelanggaran, name='perbandingan_subkriteria_pelanggaran'),
     path('perbandingan-subkriteria-pelanggaran/delete/<str:id>',delete_perbandingan_pelanggaran, name='delete_perbandingan_pelanggaran'),
-    path('hasil/',hasil, name='hasil perhitungan'),
+    path('penilaian/',hasil_penilaian, name='hasil_penilaian'),
+    #path('hasil/',hasil, name='hasil_perhitungan'),
+    path('ajax/load-subkriteria/',load_subkriteria, name='ajax_load_subkriteria'),
+    path('penilaian/detail/',hasil_penilaian, name='detail_penilaian'),
+    path('penilaian/hapus/<int:alternatif_id>/',hapus_penilaian, name='hapus_penilaian'),
+    path('penilaian/reset/',reset_penilaian, name='reset_penilaian'),
     
    
 ] 

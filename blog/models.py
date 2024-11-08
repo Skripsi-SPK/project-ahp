@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Divisi(models.Model):
     nama = models.CharField(max_length=20)
 
@@ -90,4 +89,53 @@ class Perbandingan(models.Model):
 
     def __str__(self):
         return f"{self.subcriteria1} vs {self.subcriteria2} : {self.value}"
+    
+class Criterion(models.Model):
+    nama = models.CharField(max_length=100)
+    bobot = models.FloatField()
+
+    def __str__(self):
+        return self.nama
+
+class SubCriterion(models.Model):
+    NILAI_CHOICES = [
+        ('5', '5'),
+        ('4', '4'),
+        ('3', '3'),
+        ('2', '2'),
+        ('1', '1'),
         
+    ]
+    
+    kriteria = models.ForeignKey(Criterion, on_delete=models.CASCADE)
+    nilai = models.CharField(max_length=20, choices=NILAI_CHOICES)
+    bobot = models.FloatField()
+
+    def __str__(self):
+        return f"{self.kriteria.nama} - {self.nilai}"
+
+
+class Alternative(models.Model):
+    nama = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.nama
+
+class Perhitungan(models.Model):
+    alternatif = models.ForeignKey(Alternative, on_delete=models.CASCADE)
+    kriteria = models.ForeignKey(Criterion, on_delete=models.CASCADE)
+    sub_kriteria = models.ForeignKey(SubCriterion, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.alternatif.nama} - {self.kriteria.nama}"
+
+class Total(models.Model):
+    alternatif = models.ForeignKey(Alternative, on_delete=models.CASCADE)
+    nilai_akhir = models.FloatField()
+    ranking = models.IntegerField()
+    tanggal = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.alternatif.nama} - Ranking {self.ranking}"
+    
+

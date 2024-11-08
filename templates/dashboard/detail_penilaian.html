@@ -1,0 +1,44 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">{{ title }}</h2>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Detail Penilaian {{ hasil.alternative.nama }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Kriteria</th>
+                            <th>Sub Kriteria</th>
+                            <th>Bobot Kriteria</th>
+                            <th>Bobot Sub Kriteria</th>
+                            <th>Nilai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in detail_matrix %}
+                        <tr>
+                            <td>{{ detail.kriteria }}</td>
+                            <td>{{ detail.sub_kriteria }}</td>
+                            <td>{{ detail.bobot_kriteria|floatformat:4 }}</td>
+                            <td>{{ detail.bobot_sub_kriteria|floatformat:4 }}</td>
+                            <td>{{ detail.nilai|floatformat:4 }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-info">
+                            <td colspan="4" class="text-end"><strong>Total Nilai:</strong></td>
+                            <td><strong>{{ total_nilai|floatformat:4 }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+          
+
+{% endblock content %}

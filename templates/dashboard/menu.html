@@ -1,4 +1,5 @@
 {% load static %}
+
 <div class="sidebar-wrapper">
     <div class="user">
         <div class="photo">
@@ -92,9 +93,14 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'hasil perhitungan' %}">
+                        <a href="{% url 'hasil_penilaian' %}">
+                            <span class="sidebar-normal">Penilaian</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'detail_penilaian' %}">
                             <span class="sidebar-mini">HP</span>
-                            <span class="sidebar-normal">Hasil Perhitungan</span>
+                            <span class="sidebar-normal">Detail</span>
                         </a>
                     </li>
                     <li>

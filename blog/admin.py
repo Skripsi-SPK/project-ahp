@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-
 class AlternatifAdmin(admin.ModelAdmin):
     list_display = ('nama','jabatan','body','divisi','date')
 
@@ -26,6 +25,22 @@ class SubCriteriaAdmin(admin.ModelAdmin):
 class PerbandinganAdmin(admin.ModelAdmin):
     list_display = ('subcriteria1', 'subcriteria2', 'value')
 
+class CriterionAdmin(admin.ModelAdmin):
+    list_display = ('nama', 'bobot')
+
+class SubCriterionAdmin(admin.ModelAdmin):
+    list_display = ('kriteria', 'nilai', 'bobot')
+
+class AlternativeAdmin(admin.ModelAdmin):
+    list_display = ('nama',)
+
+class PerhitunganAdmin(admin.ModelAdmin):
+    list_display = ('alternatif', 'kriteria', 'sub_kriteria')
+
+class TotalAdmin(admin.ModelAdmin):
+    list_display =('alternatif', 'nilai_akhir', 'ranking', 'tanggal')
+    ordering = ('ranking',)
+
 admin.site.register(Divisi)
 admin.site.register(Alternatif, AlternatifAdmin)
 admin.site.register(Kriteria, KriteriaAdmin)
@@ -39,4 +54,11 @@ admin.site.register(Comparison, ComparisonAdmin)
 
 admin.site.register(SubCriteria, SubCriteriaAdmin)
 admin.site.register(Perbandingan, PerbandinganAdmin)
-    
+
+admin.site.register(SubCriterion, SubCriterionAdmin)
+admin.site.register(Alternative, AlternativeAdmin)
+admin.site.register(Perhitungan, PerhitunganAdmin)
+admin.site.register(Criterion, CriterionAdmin)
+admin.site.register(Total, TotalAdmin)
+
+

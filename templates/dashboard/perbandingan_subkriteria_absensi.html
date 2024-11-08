@@ -42,13 +42,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for perbandingan in perbandingan %}
+            {% for perb in perbandingan %}
                 <tr>
-                    <td>{{ perbandingan.subcriteria1 }}</td>
-                    <td>{{ perbandingan.subcriteria2 }}</td>
-                    <td>{{ perbandingan.value }}</td>
+                    <td>{{ perb.subcriteria1 }}</td>
+                    <td>{{ perb.subcriteria2 }}</td>
+                    <td>{{ perb.value }}</td>
                     <td> 
-                        <a onclick="return confirm('delete perbandingan absensi?');" class="btn btn-sm btn-danger" href="{% url 'delete_perbandingan_absensi' perbandingan.id %}">delete</a>
+                        <a onclick="return confirm('delete perbandingan absensi?');" class="btn btn-sm btn-danger" href="{% url 'delete_perbandingan_absensi' perb.id %}">delete</a>
                     </tr>
             {% endfor %}
         </tbody>
