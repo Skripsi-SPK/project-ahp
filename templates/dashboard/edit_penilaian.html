@@ -1,0 +1,108 @@
+{% extends 'dashboard/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Edit Penilaian - {{ hasil.alternatif.nama }}
+            </h6>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'edit_penilaian' hasil.id %}">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Kriteria</th>
+                                <th>Sub Kriteria</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kriteria in kriterias %}
+                                <tr>
+                                    <td>{{ kriteria.nama }}</td>
+                                    <td>
+                                        <select 
+                                            name="kriteria_{{ kriteria.id }}" 
+                                            class="form-control" 
+                                            required
+                                        >
+                                            <option value="">Pilih Sub Kriteria</option>
+                                            {% for sub_kriteria in sub_kriterias %}
+                                                {% if sub_kriteria.kriteria.id == kriteria.id %}
+                                                    <option 
+                                                        value="{{ sub_kriteria.id }}"
+                                                        {% if penilaian_existing|get_item:kriteria.id == sub_kriteria.id %}
+                                                            selected
+                                                        {% endif %}
+                                                    >
+                                                        {{ sub_kriteria.nama }}
+                                                    </option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-save"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Optional: Tambahkan validasi form
+        $('form').on('submit', function(e) {
+            let isValid = true;
+            $('select[required]').each(function() {
+                if (!$(this).val()) {
+                    isValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Harap pilih sub kriteria untuk semua kriteria');
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .is-invalid {
+        border-color: red;
+    }
+</style>
+{% endblock %}

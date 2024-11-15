@@ -1,0 +1,244 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<style>
+/* CSS untuk efek fade-in dan slide-in */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 5s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Efek hover pada tabel */
+.table tbody tr:hover {
+    background-color: rgba(75, 192, 192, 0.2);
+    transition: background-color 4ss ease;
+}
+
+/* Animasi untuk kartu */
+.card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideIn 5s forwards;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card fade-in"> <!-- Tambahkan kelas fade-in -->
+                    <div class="card-header">
+                        <h4 class="card-title">Bobot Kriteria AHP</h4>
+                        <p class="category">Diagram Lingkaran</p>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="chartAHPWeights" style="height: 400px; width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card fade-in"> <!-- Tambahkan kelas fade-in -->
+                    <div class="card-header">
+                        <h4 class="card-title">Skor Alternatif AHP</h4>
+                        <p class="category">Diagram Batang</p>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="chartAHPScores" style="height: 400px; width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistik Charts -->
+        <div class="row mt-4">
+            <!-- Grafik Garis untuk Nilai Akhir Alternatif -->
+            <div class="col-md-12">
+                <div class="card fade-in"> <!-- Tambahkan kelas fade-in -->
+                    <div class="card-header">
+                        <h4 class="card-title">Statistik Nilai Akhir Alternatif</h4>
+                        <p class="category">Grafik Garis Nilai Akhir Alternatif AHP</p>
+                    </div>
+                    <div class="card-content">
+                        <canvas id="chartFinalScores" style="height: 400px; width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Hasil AHP -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card fade-in"> <!-- Tambahkan kelas fade-in -->
+                    <div class="card-header">
+                        <h4 class="card-title">Hasil AHP</h4>
+                    </div>
+                    <div class="card-content">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ranking</th>
+                                    <th>Alternatif</th>
+                                    <th>Nilai Akhir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data Hasil AHP -->
+                                <tr><td>1</td><td>Kartina</td><td>0.4850</td></tr>
+                                <tr><td>2</td><td>Dahlia</td><td>0.4210</td></tr>
+                                <tr><td>3</td><td>Binti</td><td>0.4070</td></tr>
+                                <tr><td>4</td><td>Lilik</td><td>0.3350</td></tr>
+                                <tr><td>5</td><td>Heru</td><td>0.3290</td></tr>
+                                <tr><td>6</td><td>Vera</td><td>0.3150</td></tr>
+                                <tr><td>7</td><td>Axel</td><td>0.3010</td></tr>
+                                <tr><td>8</td><td>Febi</td><td>0.2700</td></tr>
+                                <tr><td>9</td><td>Aulia</td><td>0.2650</td></tr>
+                                <tr><td>10</td><td>Alfan</td><td>0.2580</td></tr>
+                                <tr><td>11</td><td>Faisal</td><td>0.2580</td></tr>
+                                <tr><td>12</td><td>Echa</td><td>0.2300</td></tr>
+                                <tr><td>13</td><td>Aisyah</td><td>0.2300</td></tr>
+                                <tr><td>14</td><td>Reynal</td><td>0.2090</td></tr>
+                                <tr><td>15</td><td>Ana</td><td>0.2020</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End of container-fluid -->
+</div> <!-- End of content -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Data Bobot Kriteria AHP
+const criteriaLabels = ['Absensi', 'Skill', 'Tanggung Jawab', 'Loyalitas', 'Pelanggaran'];
+const criteriaWeights = [0.30, 0.30, 0.10, 0.20, 0.10];
+
+// Data untuk 15 Alternatif
+const alternativesLabels = [
+    'Kartina', 'Dahlia', 'Binti',
+    'Lilik', 'Heru', 'Vera',
+    'Axel', 'Febi', 'Aulia',
+    'Alfan', 'Faisal', 'Echa',
+    'Aisyah', 'Reynal', 'Ana'
+];
+
+const alternativesScores = [
+    0.4850, 0.4210, 0.4070,
+    0.3350, 0.3290, 0.3150,
+    0.3010, 0.2700, 0.2650,
+    0.2580, 0.2580, 0.2300,
+    0.2300, 0.2090, 0.2020
+]; // Skor akhir diperbarui untuk setiap alternatif
+
+// Diagram Lingkaran untuk Bobot Kriteria AHP
+const ctxAHPWeights = document.getElementById('chartAHPWeights').getContext('2d');
+new Chart(ctxAHPWeights, {
+    type: 'pie',
+    data: {
+        labels: criteriaLabels,
+        datasets: [{
+            label: 'Bobot Kriteria',
+            data: criteriaWeights,
+            backgroundColor: [
+                'rgba(255,99,132)',
+                'rgba(54,162,235)',
+                'rgba(255,206,86)',
+                'rgba(75,192,192)',
+                'rgba(153,102,255)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        animation: {
+            duration: 1000 // Durasi animasi dalam milidetik
+        }
+    }
+});
+
+// Diagram Batang untuk Skor Alternatif AHP
+const ctxAHPScores = document.getElementById('chartAHPScores').getContext('2d');
+new Chart(ctxAHPScores, {
+    type: 'bar',
+    data: {
+        labels: alternativesLabels,
+        datasets: [{
+            label: 'Skor',
+            data: alternativesScores,
+            backgroundColor: [
+                'rgba(75,192,192)',
+                'rgba(153,102,255)',
+                'rgba(255,159,64)',
+                'rgba(255,206,86)',
+                'rgba(54,162,235)',
+                'rgba(255,99,132)',
+                'rgba(75,75,192)',
+                'rgba(192,75,75)',
+                'rgba(75,192,75)',
+                'rgba(192,192,75)',
+                'rgba(75,159,192)',
+                'rgba(159,75,192)',
+                'rgba(159,192,75)',
+                'rgba(192,75,159)',
+                'rgba(75,75,159)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        animation: {
+            duration: 1000 // Durasi animasi dalam milidetik
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Grafik Garis untuk Nilai Akhir Alternatif
+const ctxFinalScores = document.getElementById('chartFinalScores').getContext('2d');
+new Chart(ctxFinalScores, {
+    type: "line",
+    data: {
+        labels: alternativesLabels,
+        datasets: [{
+            label: "Nilai Akhir Alternatif",
+            data: alternativesScores,
+            fill: false,
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1
+        }]
+    },
+    options: {
+        animation: {
+            duration: 1000 // Durasi animasi dalam milidetik
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
+{% endblock content %}

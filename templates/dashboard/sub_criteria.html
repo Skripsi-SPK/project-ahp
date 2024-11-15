@@ -1,0 +1,33 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+
+{% regroup subcriteria by kriteria as grouped_subcriteria %}
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 50px;">
+    {% for group in grouped_subcriteria %}
+        <div style="flex: 1 1 calc(20% - 20px); border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+            <h2 style="text-align: center; color: #333; font-size: 1.2em;">Kriteria: {{ group.grouper.nama }}</h2>
+            <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9em;">
+                <thead>
+                    <tr style="background-color: #ddd;">
+                        <th>No</th>
+                        <th>Nilai</th>
+                        <th>Bobot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subcriterion in group.list %}
+                        <tr>
+                            <td style="border: 1px solid #ccc; padding: 5px;">{{ forloop.counter }}</td>
+                            <td style="border: 1px solid #ccc; padding: 5px;">{{ subcriterion.nilai }}</td>
+                            <td style="border: 1px solid #ccc; padding: 5px;">{{ subcriterion.bobot }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

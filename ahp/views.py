@@ -4,10 +4,10 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout
 from django.http import HttpResponse
 
-def index(request):
-    template_name = 'front/index.html'
+def home(request):
+    template_name = 'front/home.html'
     context = {
-        'title':'halaman awal'
+        'title':'home'
         
     }
     return render(request, template_name, context)
@@ -16,6 +16,14 @@ def about(request):
     template_name = 'front/about.html'
     context = {
         'title':'about me'
+        
+    }
+    return render(request, template_name, context)
+
+def index(request):
+    template_name = 'front/index.html'
+    context = {
+        'title':'halaman awal'
         
     }
     return render(request, template_name, context)

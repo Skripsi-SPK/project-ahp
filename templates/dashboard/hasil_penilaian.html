@@ -72,12 +72,36 @@
                     <tbody>
                         {% for hasil in hasil_ahp %}
                         <tr>
-                            <td>{{ total.ranking }}</td>
-                            <td>{{ total.alternatif.nama }}</td>
-                            <td>{{ total.nilai_akhir|floatformat:4 }}</td>
+                            <td>{{ hasil.ranking }}</td>
+                            <td>{{ hasil.alternatif.nama }}</td>
+                            <td>{{ hasil.nilai_akhir|floatformat:4 }}</td>
                             <td>
                                 <a href="{% url 'detail_penilaian' hasil.id %}" 
                                    class="btn btn-sm btn-info">Detail</a>
+                                <a href="{% url 'edit_penilaian' hasil.id %}" 
+                                class="btn btn-warning btn-sm"><i class="fas fa-edit">Edit</i>
+                                </a>
+                                <a href="{% url 'delete_penilaian' hasil.id %}"
+                                   class="btn btn-danger btn-sm">Delete</a>
+                                   
+                                   <!-- Tambahkan script konfirmasi delete -->
+                            <script>
+                                    function confirmDelete(id) {
+                                        Swal.fire({
+                                            title: 'Apakah Anda yakin?',
+                                            text: "Data penilaian akan dihapus permanen!",
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonColor: '#d33',
+                                            cancelButtonColor: '#3085d6',
+                                            confirmButtonText: 'Ya, Hapus!'
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = `/delete-penilaian/${id}/`;
+                                            }
+                                        })
+                                    }
+                            </script>
                             </td>
                         </tr>
                         {% endfor %}

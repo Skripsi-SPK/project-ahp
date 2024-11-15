@@ -2,41 +2,196 @@
 {% load static %}
 
 {% block content %}
-<div class="wrapper">
-    <div class="main">
-      <div class="section section-red">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-6 ml-auto mr-auto text-center title">
-              <h3>CV ISTANA LAUNDRY SAMARINDA</h3>
-              <h3 class="title-uppercase"><small>Written by Achmad S for designers</small></h3>
+  <!-- About Us Section -->
+  <section class="section section-about py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <h2 class="title animate__animated animate__fadeInUp" data-aos="fade-up">Tentang Kami</h2>
+          <p class="description animate__animated animate__fadeIn delay-1s" data-aos="fade-up" data-aos-delay="200">
+            Istana Laundry adalah perusahaan jasa binatu yang berdedikasi untuk menyediakan layanan terbaik di Samarinda. Sejak didirikan pada tahun 2011, kami terus berinovasi dan mengutamakan kepuasan pelanggan dengan teknologi ramah lingkungan dan tim profesional.
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <!-- Company Info Cards -->
+        <div class="col-md-4 text-center animate__animated animate__fadeInLeft" data-aos="fade-left">
+          <div class="card shadow card-info hover-scale" data-aos="zoom-in">
+            <div class="card-body">
+              <h4 class="card-title">7 Outlet</h4>
+              <p>Kami memiliki 7 outlet penerimaan di seluruh Samarinda.</p>
             </div>
           </div>
-          <div class="article">
-            <div class="row">
-              <div class="col-md-8 ml-auto mr-auto">
-                <div class="card card-blog card-plain text-center">
-                  <div class="card-image">
-                    <a href="pablo">
-                      <img class="img img-raised" src="{% static 'front/img/istana.jpeg' %}">
-                    </a>
-                  </div>
-                  <div class="card-body">
-                    <div class="card-category">
-                      <span class="badge badge-primary main-tag">Featured</span>
-                    </div>
-                    <a href="javascrip: void(0);">
-                      <h3 class="card-title">Mengenal Lebih Dekat Dengan Cv Istana Laundry</h3>
-                    </a>
-                    <div class="card-description">
-                      <p>Istana Laundry adalah sebuah perusahaan yang bergerak dibidang jasa binatu Istana Laundry didirikan pada tahun 2011 dengan tujuan memberikan pelayanan jasa pada masyarakat samarinda dalam hal BINATU.
-                        Istana Laundry pada tahun 2023 ini, memiliki 7 Outlet Penerimaan dan 1 Workshop guna mendukung keperluan masyarakat Samarinda. </p>
-                    </div>
-                  </div>
+        </div>
+        <div class="col-md-4 text-center animate__animated animate__fadeInUp delay-1s" data-aos="fade-up">
+          <div class="card shadow card-info hover-scale" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card-body">
+              <h4 class="card-title">1 Workshop</h4>
+              <p>Workshop kami dilengkapi dengan teknologi terkini untuk menjaga kualitas pakaian.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-center animate__animated animate__fadeInRight delay-2s" data-aos="fade-right">
+          <div class="card shadow card-info hover-scale" data-aos="zoom-in" data-aos-delay="400">
+            <div class="card-body">
+              <h4 class="card-title">10+ Tahun Pengalaman</h4>
+              <p>Lebih dari satu dekade melayani kebutuhan laundry di Samarinda.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="section section-services bg-light py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 mx-auto text-center">
+          <h2 class="title animate__animated animate__fadeInUp" data-aos="fade-up">Layanan Kami</h2>
+          <p class="description animate__animated animate__fadeIn delay-1s" data-aos="fade-up" data-aos-delay="200">
+            Kami menawarkan berbagai layanan laundry yang dapat disesuaikan dengan kebutuhan pelanggan, mulai dari cuci setrika hingga perawatan khusus pakaian.
+          </p>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4 text-center animate__animated animate__fadeInLeft" data-aos="fade-left">
+          <div class="card shadow card-service hover-scale" data-aos="zoom-in">
+            <img class="card-img-top img-fluid transition-all" src="{% static 'front/img/file1.jpg' %}" alt="Cuci Setrika" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card-body">
+              <h4 class="card-title">Cuci Setrika</h4>
+              <p>Layanan laundry dasar dengan hasil maksimal dan rapi.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-center animate__animated animate__fadeInUp delay-1s" data-aos="fade-up">
+          <div class="card shadow card-service hover-scale" data-aos="zoom-in" data-aos-delay="400">
+            <img class="card-img-top img-fluid transition-all" src="{% static 'front/img/file2.jpeg' %}" alt="Perawatan Khusus" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card-body">
+              <h4 class="card-title">Perawatan Khusus</h4>
+              <p>Perawatan untuk pakaian khusus dengan teknologi ramah lingkungan.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-center animate__animated animate__fadeInRight delay-2s" data-aos="fade-right">
+          <div class="card shadow card-service hover-scale" data-aos="zoom-in" data-aos-delay="600">
+            <img class="card-img-top img-fluid transition-all" src="{% static 'front/img/file3.jpeg' %}" alt="Antar Jemput" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card-body">
+              <h4 class="card-title">Antar Jemput</h4>
+              <p>Jasa antar jemput untuk mempermudah kebutuhan laundry Anda.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="section section-timeline py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto text-center">
+          <h2 class="title animate__animated animate__fadeInUp" data-aos="fade-up">Perjalanan Kami</h2>
+          <p class="description animate__animated animate__fadeIn delay-1s" data-aos="fade-up" data-aos-delay="200">
+            Ikuti perjalanan kami dari awal berdiri hingga menjadi pilihan utama jasa laundry di Samarinda.
+          </p>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item animate__animated animate__fadeInLeft" data-aos="fade-left">
+          <h4>2011</h4>
+          <p>Istana Laundry berdiri dengan tujuan untuk memberikan layanan laundry yang berkualitas di Samarinda.</p>
+        </div>
+        <div class="timeline-item animate__animated animate__fadeInRight delay-1s" data-aos="fade-right">
+          <h4>2015</h4>
+          <p>Membuka outlet pertama di pusat kota Samarinda untuk lebih mendekatkan diri kepada pelanggan.</p>
+        </div>
+        <div class="timeline-item animate__animated animate__fadeInLeft delay-2s" data-aos="fade-left">
+          <h4>2023</h4>
+          <p>Mengembangkan 7 outlet penerimaan dan 1 workshop untuk melayani kebutuhan pelanggan dengan lebih baik.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="footer bg-transparent text-white py-4">
+    <div class="container text-center">
+      <p>&copy; 2024 CV Istana Laundry. All rights reserved.</p>
+      <ul class="list-inline">
+        <li class="list-inline-item"><a href="#" class="text-white">Facebook</a></li>
+        <li class="list-inline-item"><a href="#" class="text-white">Twitter</a></li>
+        <li class="list-inline-item"><a href="#" class="text-white">Instagram</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <style>
+    /* Parallax Effect */
+    body {
+      background-image: url("{% static 'front/img/back.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      height: 100%;
+      margin: 0;
+    }
+
+    .section-about, .section-services, .section-timeline {
+      padding: 60px 0;
+      background-color: rgba(255, 255, 255, 0.8); /* For better contrast on text */
+      transition: transform 0.3s ease;
+    }
+
+    /* Card Hover Effect */
+    .card-info, .card-service {
+      border-radius: 10px;
+      transition: transform 0.3s, box-shadow 0.3s ease-in-out;
+    }
+
+    .card-service:hover, .card-info:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .timeline {
+      border-left: 4px solid #007bff;
+      position: relative;
+      padding: 20px;
+    }
+
+    .timeline-item {
+      margin-bottom: 40px;
+      padding-left: 40px;
+      position: relative;
+    }
+
+    .timeline-item h4 {
+      font-weight: bold;
+    }
+
+    .timeline-item:before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      background-color: #007bff;
+      border-radius: 50%;
+    }
+
+    .footer {
+      background-color: rgba(0, 0, 0, 0.3); /* Transparent footer */
+    }
+  </style>
+
+  <script>
+    AOS.init({
+      duration: 1000,
+      easing: 'ease-in-out',
+      once: true,  // Animation only happens once when scrolling
+    });
+  </script>
+
 {% endblock content %}

@@ -15,8 +15,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', include('blog.urls')),
 
-    path('', index, name='index'),
+    path('', home, name='home'),
     path('about/', about, name='about'),
+    path('index/', index, name='index'),
+
 
     path('login/', login, name='login'),
     path('logout/', logout_view, name='logout'),

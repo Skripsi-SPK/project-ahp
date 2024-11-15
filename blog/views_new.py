@@ -3,21 +3,26 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+
 from .models import Alternatif, Divisi, Kriteria, SubKriteria, DataKriteria, Criteria, Comparison, SubCriteria, Perbandingan, SubCriterion, Criterion, Total, Perhitungan, Alternative
 from .forms import AlternatifForms, KriteriaForms, SubkriteriaForms, DataKriteriaForms, ComparisonForm, PerbandinganForm, PerhitunganForm
 
 from numpy.linalg import eig
 import numpy as np
+import matplotlib.pyplot as plt
+
+
+
 
 @login_required
-
 def dashboard(request):
-    template_name = "dashboard/dashboard.html"
+    template_name = "dashboard/statistik.html"
     context ={
         'title':'dashboard',
         
     }
     return render(request ,template_name, context)
+
 
 @login_required
 def alternatif(request):
@@ -844,9 +849,9 @@ def hasil_penilaian(request):
             # Simpan hasil
             for rank, idx in enumerate(ranking, 1):
                 Total.objects.create(
-                    alternatif=alternatifs[idx],
-                    nilai_akhir=float(nilai_akhir[idx]),
-                    ranking=rank
+                alternatif=alternatifs[int(idx)],  # Konversi idx ke int
+                nilai_akhir=float(nilai_akhir[int(idx)]),  # Konversi idx ke int
+                ranking=rank
                 )
             
             return redirect(hasil_penilaian)
@@ -895,7 +900,7 @@ def detail_penilaian(request, hasil_id):
             nilai = penilaian.sub_kriteria.bobot * penilaian.kriteria.bobot
             detail_matrix.append({
                 'kriteria': penilaian.kriteria.nama,
-                'sub_kriteria': penilaian.sub_kriteria.nama,
+                'sub_kriteria': penilaian.sub_kriteria,
                 'bobot_kriteria': penilaian.kriteria.bobot,
                 'bobot_sub_kriteria': penilaian.sub_kriteria.bobot,
                 'nilai': nilai
@@ -913,47 +918,77 @@ def detail_penilaian(request, hasil_id):
     
     except Total.DoesNotExist:
         messages.error(request, 'Data hasil tidak ditemukan')
+        return redirect(detail_penilaian)
+    
+@login_required
+def edit_penilaian(request, hasil_id):
+    template_name = "dashboard/edit_penilaian.html"
+    try:
+        hasil = Total.objects.get(id=hasil_id)
+        alternatif = hasil.alternatif
+        kriterias = Criterion.objects.all()
+        sub_kriterias = SubCriterion.objects.all()
+
+        if request.method == 'POST':
+            for kriteria in kriterias:
+                sub_kriteria_id = request.POST.get(f'kriteria_{kriteria.id}')
+                if not sub_kriteria_id:
+                    messages.error(request, f'Pilih sub kriteria untuk {kriteria.nama}')
+                    sub_kriteria = SubCriterion.objects.get(id=sub_kriteria_id)
+                    Perhitungan.objects.update_or_create(
+                        alternatif=alternatif,
+                        kriteria=kriteria,
+                        defaults={'sub_kriteria': sub_kriteria}
+                    )
+
+            # Redirect ke halaman hasil penilaian atau detail
+            messages.success(request, 'Penilaian berhasil diupdate')
+            return redirect(hasil_penilaian)
+
+        # Ambil penilaian existing
+        penilaian_existing = Perhitungan.objects.filter(alternatif=alternatif)
+        penilaian_dict = {p.kriteria.id: p.sub_kriteria.id for p in penilaian_existing}
+
+        context = {
+            'title': f'Edit Penilaian - {alternatif.nama}',
+            'hasil': hasil,
+            'kriterias': kriterias,
+            'sub_kriterias': sub_kriterias,
+            'penilaian_existing': penilaian_dict
+        }
+        
+        return render(request, template_name, context)
+    
+    except Total.DoesNotExist:
+        messages.error(request, 'Data hasil tidak ditemukan')
+        return redirect(hasil_penilaian)
+
+def delete_penilaian(request, hasil_id):
+    try:
+        hasil = Total.objects.get(id=hasil_id)
+        
+        # Hapus perhitungan terkait
+        Perhitungan.objects.filter(alternatif=hasil.alternatif).delete()
+        
+        # Hapus total/hasil
+        hasil.delete()
+        
+        messages.success(request, 'Data penilaian berhasil dihapus')
         return redirect(hasil_penilaian)
     
-@login_required
-def hapus_penilaian(request, alternatif_id):
-    if request.method == 'POST':
-        try:
-            Perhitungan.objects.filter(alternatif_id=alternatif_id).delete()
-            Total.objects.filter(alternatif_id=alternatif_id).delete()
-            
-        except Exception as e:
-    
-            return redirect(hapus_penilaian)
+    except Total.DoesNotExist:
+        messages.error(request, 'Data hasil tidak ditemukan')
+        return redirect(hasil_penilaian)
 
-@login_required
-# View untuk mengatur ulang semua penilaian
-def reset_penilaian(request):
-    if request.method == 'POST':
-        try:
-            Perhitungan.objects.all().delete()
-            Total.objects.all().delete()
-           
-        except Exception as e:
+@login_required   
+def sub_criteria(request):
+    template_name= "dashboard/sub_criteria.html"
+    subcriteria = SubCriterion.objects.all()
 
-            return redirect(reset_penilaian)
-
-def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        self.hitung_ahp()
-    
-    
-
-@login_required
-#def hasil(request):
-   # template_name = "dashboard/hasil_perhitungan.html"
-    #hasil = HasilAHP.objects.all().order_by('ranking')
-    #return render(request, template_name, context={'hasil': hasil})
-  
-def load_subkriteria(request):
-    KeyError = ('kriteria')
-
-
-        
-
+    # Mengirim data ke template
+    context = {
+        'title':'list nilai subcriteria',
+        'subcriteria': subcriteria
+    }
+    return render(request, template_name, context)   
 
